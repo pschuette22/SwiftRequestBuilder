@@ -8,3 +8,5 @@
 import Foundation
 
 protocol RequestBody: Codable, Equatable { }
+
+struct EmptyBody: RequestBody { }

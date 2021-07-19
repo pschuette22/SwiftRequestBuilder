@@ -19,7 +19,7 @@ enum HTTPMethod: String {
     case trace = "TRACE"
 }
 
-struct RequestBuilder<T: RequestBody> {
+class RequestBuilder<T: RequestBody> {
     var encoder: AnyEncoder = JSONEncoder()
     var cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
     var timeoutInterval: TimeInterval = 60 // 60 second timeout by default
@@ -81,28 +81,24 @@ extension RequestBuilder {
 // MARK: - Setters
 extension RequestBuilder {
     @discardableResult
-    mutating
     func encoder(_ encoder: AnyEncoder) -> RequestBuilder {
         self.encoder = encoder
         return self
     }
     
     @discardableResult
-    mutating
     func cachePolicy(_ cachePolicy: URLRequest.CachePolicy) -> RequestBuilder {
         self.cachePolicy = cachePolicy
         return self
     }
     
     @discardableResult
-    mutating
     func with(httpMethod: HTTPMethod) -> RequestBuilder {
         self.httpMethod = httpMethod
         return self
     }
 
     @discardableResult
-    mutating
     func with(baseURL: URL) -> RequestBuilder {
         // Found ourselves a bug
         // https://bugs.swift.org/browse/SR-11593
@@ -115,35 +111,30 @@ extension RequestBuilder {
     }
     
     @discardableResult
-    mutating
     func with(headers: [String: String]) -> RequestBuilder {
         self.headers.merge(headers) { $1 }
         return self
     }
     
     @discardableResult
-    mutating
     func with(header: String, equaling value: String) -> RequestBuilder {
         self.headers[header] = value
         return self
     }
     
     @discardableResult
-    mutating
     func with(pathComponents: [String]) -> RequestBuilder {
         self.pathComponents.append(contentsOf: pathComponents)
         return self
     }
     
     @discardableResult
-    mutating
     func with(pathComponent: String) -> RequestBuilder {
         self.pathComponents.append(pathComponent)
         return self
     }
     
     @discardableResult
-    mutating
     func with(queryItems: [String: Encodable]) -> RequestBuilder {
         queryItems.forEach { name, value in
             self.with(queryItem: name, equaling: value)
@@ -152,7 +143,6 @@ extension RequestBuilder {
     }
 
     @discardableResult
-    mutating
     func with(queryItem name: String, equaling value: Encodable) -> RequestBuilder {
         switch value {
         case let bool as Bool:
@@ -171,14 +161,12 @@ extension RequestBuilder {
     }
     
     @discardableResult
-    mutating
     func with(httpBody: T) -> RequestBuilder {
         self.httpBody = httpBody // AnyEncodable(value: httpBody)
         return self
     }
     
     @discardableResult
-    mutating
     func with(documentURL: URL) -> RequestBuilder {
         self.documentURL = documentURL
         return self
