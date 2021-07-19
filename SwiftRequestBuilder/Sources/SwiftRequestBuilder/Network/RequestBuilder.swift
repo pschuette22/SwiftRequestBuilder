@@ -7,29 +7,31 @@
 
 import Foundation
 
-struct RequestBuilder<T: RequesBody> {
-    enum HTTPMethod: String {
-        case get = "GET"
-        case head = "HEAD"
-        case post = "POST"
-        case put = "PUT"
-        case patch = "PATCH"
-        case delete = "DELETE"
-        case connect = "CONNECT"
-        case options = "OPTIONS"
-        case trace = "TRACE"
-    }
+enum HTTPMethod: String {
+    case get = "GET"
+    case head = "HEAD"
+    case post = "POST"
+    case put = "PUT"
+    case patch = "PATCH"
+    case delete = "DELETE"
+    case connect = "CONNECT"
+    case options = "OPTIONS"
+    case trace = "TRACE"
+}
 
+struct RequestBuilder<T: RequestBody> {
     var encoder: AnyEncoder = JSONEncoder()
+    var cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
+    var timeoutInterval: TimeInterval = 60 // 60 second timeout by default
+
+    // Request Components
     private(set) var httpMethod: HTTPMethod = .get
     private(set) var scheme: String = ""
     private(set) var host: String = ""
-    private(set) var cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
-    private(set) var timeoutInterval: TimeInterval = 30 // 30 second timeout by default
     private(set) var pathComponents = [String]()
     private(set) var headers = [String: String]()
     private(set) var queryItems = [String: String]()
-    private var httpBody: T?
+    private(set) var httpBody: T?
     private(set) var documentURL: URL?
     
     /// Combine components into a URL at runtime
@@ -49,20 +51,29 @@ struct RequestBuilder<T: RequesBody> {
         // swiftlint:disable:next force_unwrapping
         return urlComponents.url!
     }
-  
+}
+
+// MARK: - Build
+extension RequestBuilder {
     func build() -> URLRequest {
-        var request = URLRequest(url: url,
-                                 cachePolicy: cachePolicy,
-                                 timeoutInterval: timeoutInterval)
+        var request = URLRequest(
+            url: url,
+            cachePolicy: cachePolicy,
+            timeoutInterval: timeoutInterval
+        )
+
+        request.httpMethod = httpMethod.rawValue
+
         if !headers.isEmpty {
             request.allHTTPHeaderFields = headers
         }
-        request.httpMethod = httpMethod.rawValue
         if let httpBody = self.httpBody {
             // swiftlint:disable:next force_try
             request.httpBody = try! encoder.encode(httpBody)
         }
+
         request.mainDocumentURL = documentURL
+
         return request
     }
 }
@@ -73,6 +84,13 @@ extension RequestBuilder {
     mutating
     func encoder(_ encoder: AnyEncoder) -> RequestBuilder {
         self.encoder = encoder
+        return self
+    }
+    
+    @discardableResult
+    mutating
+    func cachePolicy(_ cachePolicy: URLRequest.CachePolicy) -> RequestBuilder {
+        self.cachePolicy = cachePolicy
         return self
     }
     
