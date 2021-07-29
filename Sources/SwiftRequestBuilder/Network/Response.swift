@@ -7,4 +7,6 @@
 
 import Foundation
 
-protocol Response: Codable, Equatable { }
+public protocol Response: Codable, Equatable { }
+
+public struct EmptyResponse: Response { }

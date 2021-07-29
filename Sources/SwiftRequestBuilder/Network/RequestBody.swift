@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol RequestBody: Codable, Equatable { }
+public protocol RequestBody: Codable, Equatable { }
 
-struct EmptyBody: RequestBody { }
+public struct EmptyBody: RequestBody { }

@@ -7,23 +7,11 @@
 
 import Foundation
 
-enum HTTPMethod: String {
-    case get = "GET"
-    case head = "HEAD"
-    case post = "POST"
-    case put = "PUT"
-    case patch = "PATCH"
-    case delete = "DELETE"
-    case connect = "CONNECT"
-    case options = "OPTIONS"
-    case trace = "TRACE"
-}
-
-class RequestBuilder<T: RequestBody> {
-    var encoder: AnyEncoder = JSONEncoder()
-    var cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
-    var timeoutInterval: TimeInterval = 60 // 60 second timeout by default
-
+public class RequestBuilder<T: RequestBody> {
+    var encoder: AnyEncoder
+    var cachePolicy: URLRequest.CachePolicy
+    var timeoutInterval: TimeInterval
+    
     // Request Components
     private(set) var httpMethod: HTTPMethod = .get
     private(set) var scheme: String = ""
@@ -34,6 +22,16 @@ class RequestBuilder<T: RequestBody> {
     private(set) var httpBody: T?
     private(set) var documentURL: URL?
     
+    required init(
+        encoder: AnyEncoder = JSONEncoder(),
+        cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
+        timeoutInterval: TimeInterval = Constants.defaultTimeoutInterval
+    ) {
+        self.encoder = encoder
+        self.cachePolicy = cachePolicy
+        self.timeoutInterval = timeoutInterval
+    }
+    
     /// Combine components into a URL at runtime
     private var url: URL {
         var urlComponents = URLComponents()
@@ -43,6 +41,7 @@ class RequestBuilder<T: RequestBody> {
         // Just adds in a little safety in case you want to use `/` for readability
         path = path.replacingOccurrences(of: "//", with: "/")
         urlComponents.path = path
+        
         if !queryItems.isEmpty {
             urlComponents.queryItems = queryItems.map {
                 URLQueryItem(name: $0, value: $1)
@@ -51,10 +50,9 @@ class RequestBuilder<T: RequestBody> {
         // swiftlint:disable:next force_unwrapping
         return urlComponents.url!
     }
-}
 
-// MARK: - Build
-extension RequestBuilder {
+    // MARK: - Build
+    /// Build the request
     func build() -> URLRequest {
         var request = URLRequest(
             url: url,
@@ -162,7 +160,7 @@ extension RequestBuilder {
     
     @discardableResult
     func with(httpBody: T) -> RequestBuilder {
-        self.httpBody = httpBody // AnyEncodable(value: httpBody)
+        self.httpBody = httpBody
         return self
     }
     
@@ -178,4 +176,9 @@ private extension Bool {
     var stringValue: String {
         return self ? "1" : "0"
     }
+}
+
+// MARK: - Constants
+private enum Constants {
+    static let defaultTimeoutInterval: TimeInterval = 60
 }

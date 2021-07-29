@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol AnyEncoder {
+public protocol AnyEncoder {
     func encode<T>(_ value: T) throws -> Data where T: Encodable
 }
 
