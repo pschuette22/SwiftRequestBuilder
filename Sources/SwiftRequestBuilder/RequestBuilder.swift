@@ -22,7 +22,7 @@ public class RequestBuilder<T: RequestBody> {
     private(set) var httpBody: T?
     private(set) var documentURL: URL?
     
-    required init(
+    public required init(
         encoder: AnyEncoder = JSONEncoder(),
         cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
         timeoutInterval: TimeInterval = Constants.defaultTimeoutInterval
@@ -33,7 +33,7 @@ public class RequestBuilder<T: RequestBody> {
     }
     
     /// Combine components into a URL at runtime
-    private var url: URL {
+    public var url: URL {
         var urlComponents = URLComponents()
         urlComponents.scheme = scheme
         urlComponents.host = host
@@ -53,7 +53,7 @@ public class RequestBuilder<T: RequestBody> {
 
     // MARK: - Build
     /// Build the request
-    func build() -> URLRequest {
+    public func build() -> URLRequest {
         var request = URLRequest(
             url: url,
             cachePolicy: cachePolicy,
@@ -77,7 +77,7 @@ public class RequestBuilder<T: RequestBody> {
 }
 
 // MARK: - Setters
-extension RequestBuilder {
+public extension RequestBuilder {
     @discardableResult
     func encoder(_ encoder: AnyEncoder) -> RequestBuilder {
         self.encoder = encoder
@@ -172,13 +172,15 @@ extension RequestBuilder {
 }
 
 // MARK: - Bool+StringValue
-private extension Bool {
+
+extension Bool {
     var stringValue: String {
         return self ? "1" : "0"
     }
 }
 
 // MARK: - Constants
-private enum Constants {
-    static let defaultTimeoutInterval: TimeInterval = 60
+
+public enum Constants {
+    public static let defaultTimeoutInterval: TimeInterval = 60
 }
