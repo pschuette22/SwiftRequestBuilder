@@ -13,8 +13,13 @@ extension XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        let method = try XCTUnwrap(urlRequest.httpMethod, "Undefined http method", file: file, line: line)
-        XCTAssertEqual(urlRequest.httpMethod, blueprint.method.rawValue, file: file, line: line)
+        XCTAssertEqual(
+            urlRequest.httpMethod,
+            blueprint.method.rawValue,
+            "Mismatching request method",
+            file: file,
+            line: line
+        )
         
         let unwrappedURL = try XCTUnwrap(urlRequest.url, "Undefined url", file: file, line: line)
         let blueprintURL = try XCTUnwrap(
@@ -77,10 +82,12 @@ extension XCTestCase {
         
         if
             let httpBody = urlRequest.httpBody,
-            let bodyType = blueprint.bodyType,
-            bodyType != EmptyBody.self
+            blueprint.bodyType != EmptyBody.self
         {
-            let decodedBody = try blueprint.decoder.decode(bodyType.self, from: httpBody)
+            let decodedBody = try blueprint.decoder.decode(
+                blueprint.bodyType.self,
+                from: httpBody
+            )
             XCTAssertEqual(
                 decodedBody, 
                 blueprint.body,

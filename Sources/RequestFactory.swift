@@ -20,7 +20,7 @@ public class RequestFactory<T: RequestBody> {
     private(set) var headers = [String: String]()
     private(set) var queryItems = [String: String]()
     private(set) var httpBody: T?
-    private(set) var documentURL: URL?
+    private(set) var documentURL: Foundation.URL?
     
     public required init(
         encoder: AnyEncoder = JSONEncoder(),
@@ -33,7 +33,7 @@ public class RequestFactory<T: RequestBody> {
     }
     
     /// Combine components into a URL at runtime
-    public var url: URL {
+    public var url: Foundation.URL {
         var urlComponents = URLComponents()
         urlComponents.scheme = scheme
         urlComponents.host = host
@@ -97,7 +97,7 @@ public extension RequestFactory {
     }
 
     @discardableResult
-    func with(baseURL: URL) -> RequestFactory {
+    func with(baseURL: Foundation.URL) -> RequestFactory {
         // Found ourselves a bug
         // https://bugs.swift.org/browse/SR-11593
         self.scheme = baseURL.scheme ?? ""
@@ -165,7 +165,7 @@ public extension RequestFactory {
     }
     
     @discardableResult
-    func with(documentURL: URL) -> RequestFactory {
+    func with(documentURL: Foundation.URL) -> RequestFactory {
         self.documentURL = documentURL
         return self
     }

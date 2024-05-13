@@ -48,6 +48,25 @@ extension RequestFactoryTests {
         
         try assertRequest(request, matches: blueprint)
     }
+    
+    func test_getBuilderSyntax() throws {
+        let blueprint = Blueprint<EmptyBody>(
+            method: .get,
+            url: "https://google.com",
+            headers: ["header1": "value"]
+        )
+        
+        let request = URLRequest(EmptyBody.self) {
+            HTTPMethod(.get)
+            Headers([
+                "header1": "value"
+            ])
+            URL(string: "https://google.com")!
+            Body(EmptyBody())
+        }
+        
+        try assertRequest(request, matches: blueprint)
+    }
 }
 
 // MARK: - Post Request Tests
@@ -78,6 +97,34 @@ extension RequestFactoryTests {
                 )
             )
             .build()
+        
+        try assertRequest(request, matches: blueprint)
+    }
+    
+    func test_postBuilderSyntax() throws {
+        let blueprint = Blueprint(
+            bodyType: SimpleTestBody.self,
+            method: HTTPMethod.post,
+            url: "https://google.com?query=1",
+            headers: ["header1": "value"],
+            body: SimpleTestBody(
+                hello: "Hello!",
+                world: 1,
+                isExcited: true
+            )
+        )
+        
+        let request = URLRequest(SimpleTestBody.self) {
+            HTTPMethod(.post)
+            Header("header1", value: "value")
+            URL(string: "https://google.com")!
+            QueryItem("query", value: 1)
+            Body(SimpleTestBody(
+                hello: "Hello!",
+                world: 1,
+                isExcited: true
+            ))
+        }
         
         try assertRequest(request, matches: blueprint)
     }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum HTTPMethod: String {
+public enum HTTPMethod: String, RequestComponent {
     case get = "GET"
     case head = "HEAD"
     case post = "POST"
@@ -17,4 +17,13 @@ public enum HTTPMethod: String {
     case connect = "CONNECT"
     case options = "OPTIONS"
     case trace = "TRACE"
+    
+    public init(_ method: HTTPMethod) {
+        // Gives builder syntax HTTPMethod(.get)
+        self = method
+    }
+    
+    func apply<T>(to factory: RequestFactory<T>) -> RequestFactory<T> where T : RequestBody {
+        factory.with(httpMethod: self)
+    }
 }
