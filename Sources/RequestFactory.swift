@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class RequestBuilder<T: RequestBody> {
+public class RequestFactory<T: RequestBody> {
     var encoder: AnyEncoder
     var cachePolicy: URLRequest.CachePolicy
     var timeoutInterval: TimeInterval
@@ -77,27 +77,27 @@ public class RequestBuilder<T: RequestBody> {
 }
 
 // MARK: - Setters
-public extension RequestBuilder {
+public extension RequestFactory {
     @discardableResult
-    func encoder(_ encoder: AnyEncoder) -> RequestBuilder {
+    func encoder(_ encoder: AnyEncoder) -> RequestFactory {
         self.encoder = encoder
         return self
     }
     
     @discardableResult
-    func cachePolicy(_ cachePolicy: URLRequest.CachePolicy) -> RequestBuilder {
+    func cachePolicy(_ cachePolicy: URLRequest.CachePolicy) -> RequestFactory {
         self.cachePolicy = cachePolicy
         return self
     }
     
     @discardableResult
-    func with(httpMethod: HTTPMethod) -> RequestBuilder {
+    func with(httpMethod: HTTPMethod) -> RequestFactory {
         self.httpMethod = httpMethod
         return self
     }
 
     @discardableResult
-    func with(baseURL: URL) -> RequestBuilder {
+    func with(baseURL: URL) -> RequestFactory {
         // Found ourselves a bug
         // https://bugs.swift.org/browse/SR-11593
         self.scheme = baseURL.scheme ?? ""
@@ -109,31 +109,31 @@ public extension RequestBuilder {
     }
     
     @discardableResult
-    func with(headers: [String: String]) -> RequestBuilder {
+    func with(headers: [String: String]) -> RequestFactory {
         self.headers.merge(headers) { $1 }
         return self
     }
     
     @discardableResult
-    func with(header: String, equaling value: String) -> RequestBuilder {
+    func with(header: String, equaling value: String) -> RequestFactory {
         self.headers[header] = value
         return self
     }
     
     @discardableResult
-    func with(pathComponents: [String]) -> RequestBuilder {
+    func with(pathComponents: [String]) -> RequestFactory {
         self.pathComponents.append(contentsOf: pathComponents)
         return self
     }
     
     @discardableResult
-    func with(pathComponent: String) -> RequestBuilder {
+    func with(pathComponent: String) -> RequestFactory {
         self.pathComponents.append(pathComponent)
         return self
     }
     
     @discardableResult
-    func with(queryItems: [String: Encodable]) -> RequestBuilder {
+    func with(queryItems: [String: Encodable]) -> RequestFactory {
         queryItems.forEach { name, value in
             self.with(queryItem: name, equaling: value)
         }
@@ -141,7 +141,7 @@ public extension RequestBuilder {
     }
 
     @discardableResult
-    func with(queryItem name: String, equaling value: Encodable) -> RequestBuilder {
+    func with(queryItem name: String, equaling value: Encodable) -> RequestFactory {
         switch value {
         case let bool as Bool:
             queryItems[name] = bool.stringValue
@@ -159,13 +159,13 @@ public extension RequestBuilder {
     }
     
     @discardableResult
-    func with(httpBody: T) -> RequestBuilder {
+    func with(httpBody: T) -> RequestFactory {
         self.httpBody = httpBody
         return self
     }
     
     @discardableResult
-    func with(documentURL: URL) -> RequestBuilder {
+    func with(documentURL: URL) -> RequestFactory {
         self.documentURL = documentURL
         return self
     }

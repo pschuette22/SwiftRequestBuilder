@@ -21,13 +21,17 @@ let package = Package(
     targets: [
         .target(
             name: "SwiftRequestBuilder",
-            dependencies: []),
+            dependencies: [],
+            path: "Sources"
+        ),
         .target(
             name: "SwiftRequestBuilderTestHelpers",
             dependencies: ["SwiftRequestBuilder"],
             path: "TestHelpers"),
         .testTarget(
             name: "SwiftRequestBuilderTests",
-            dependencies: ["SwiftRequestBuilder", "SwiftRequestBuilderTestHelpers"])
+            dependencies: ["SwiftRequestBuilder", "SwiftRequestBuilderTestHelpers"],
+            path: "Tests"
+        )
     ]
 )

@@ -8,11 +8,12 @@
 import Foundation
 import XCTest
 @testable import SwiftRequestBuilder
+import SwiftRequestBuilderTestHelpers
 
-final class RequestBuilderTests: XCTestCase { }
+final class RequestFactoryTests: XCTestCase { }
 
 // MARK: - Simple Request Body
-extension RequestBuilderTests {
+extension RequestFactoryTests {
     struct SimpleTestBody: RequestBody {
         var hello: String
         var world: Int
@@ -30,30 +31,29 @@ extension RequestBuilderTests {
 }
 
 // MARK: - Get Request Tests
-extension RequestBuilderTests {
+extension RequestFactoryTests {
     func test_simpleGetRequest() throws {
-        let blueprint = URLRequest.Blueprint(
-            bodyType: EmptyBody.self,
+        let blueprint = Blueprint<EmptyBody>(
             method: .get,
             url: "https://google.com",
             headers: ["header1": "value"]
         )
         
-        let request = RequestBuilder()
+        let request = RequestFactory<EmptyBody>()
             .with(httpMethod: HTTPMethod.get)
             .with(baseURL: URL(string: "https://google.com")!)
             .with(header: "header1", equaling: "value")
             .with(httpBody: EmptyBody())
             .build()
         
-        try request.assertEqual(to: blueprint)
+        try assertRequest(request, matches: blueprint)
     }
 }
 
 // MARK: - Post Request Tests
-extension RequestBuilderTests {
+extension RequestFactoryTests {
     func test_simplePostRequest() throws {
-        let blueprint = URLRequest.Blueprint(
+        let blueprint = Blueprint(
             bodyType: SimpleTestBody.self,
             method: HTTPMethod.post,
             url: "https://google.com",
@@ -66,7 +66,7 @@ extension RequestBuilderTests {
             documentURL: nil
         )
         
-        let request = RequestBuilder()
+        let request = RequestFactory()
             .with(httpMethod: .post)
             .with(baseURL: URL(string: "https://google.com")!)
             .with(header: "header1", equaling: "value")
@@ -79,6 +79,6 @@ extension RequestBuilderTests {
             )
             .build()
         
-        try request.assertEqual(to: blueprint)
+        try assertRequest(request, matches: blueprint)
     }
 }
