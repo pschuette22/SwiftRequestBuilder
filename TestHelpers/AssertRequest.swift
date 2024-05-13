@@ -1,37 +1,43 @@
 //
-//  File.swift
-//  
-//
 //  Created by Peter Schuette on 7/18/21.
 //
 
 import Foundation
 import XCTest
 @testable import SwiftRequestBuilder
-
-extension URLRequest {
-    struct Blueprint<T: RequestBody> {
-        var decoder: AnyDecoder = JSONDecoder()
-        var bodyType: T.Type?
-        var method: HTTPMethod
-        var url: String
-        var headers: [String: String]
-        var body: T?
-        var documentURL: URL?
-    }
     
-    func assertEqual<T: RequestBody>(to blueprint: Blueprint<T>) throws {
-        let method = try XCTUnwrap(httpMethod, "Undefined http method")
-        XCTAssertEqual(method, blueprint.method.rawValue)
+extension XCTestCase {
+    public static func assertRequest<T: RequestBody>(
+        _ urlRequest: URLRequest,
+        matches blueprint: Blueprint<T>,
+        file: StaticString = #file,
+        line: UInt = #line
+        ) throws {
+
+        let method = try XCTUnwrap(httpMethod, "Undefined http method", file: file, line: line)
+        XCTAssertEqual(method, blueprint.method.rawValue, file: file, line: line)
         
-        let unwrappedURL = try XCTUnwrap(url, "Undefined url")
-        let blueprintURL = try XCTUnwrap(URL(string: blueprint.url))
+        let unwrappedURL = try XCTUnwrap(url, "Undefined url", file: file, line: line)
+        let blueprintURL = try XCTUnwrap(
+            URL(string: blueprint.url),
+            "Missing blueprint URL", 
+            file: file,
+            line: line
+        )
         
-        XCTAssertEqual(unwrappedURL.scheme, blueprintURL.scheme)
-        XCTAssertEqual(unwrappedURL.host, blueprintURL.host)
-        XCTAssertEqual(unwrappedURL.pathComponents, blueprintURL.pathComponents)
+        XCTAssertEqual(
+            unwrappedURL.scheme, 
+            blueprintURL.scheme, 
+            "Mismatched schema: \(unwrappedURL.schema), expected \(blueprintURL.schema)", 
+            file: file,
+            line: line
+        )
+
+        XCTAssertEqual(unwrappedURL.host, blueprintURL.host, file: file, line: line)
+
+        XCTAssertEqual(unwrappedURL.pathComponents, blueprintURL.pathComponents, file: file, line: line)
         if let queryList = blueprintURL.query?.components(separatedBy: "&") {
-            let unwrappdeQuery = try XCTUnwrap(unwrappedURL.query)
+            let unwrappdeQuery = try XCTUnwrap(unwrappedURL.query, file: file, line: line)
             queryList.forEach {
                 // Assert every query item is contained in the blueprint string
                 // Needs to be done this way because we can't guarantee order
