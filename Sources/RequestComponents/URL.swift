@@ -8,7 +8,7 @@
 import Foundation
 
 extension URL: RequestComponent {
-    func apply<T>(to factory: RequestFactory<T>) -> RequestFactory<T> where T : RequestBody {
+    public func apply<T>(to factory: RequestFactory<T>) -> RequestFactory<T> where T : RequestBody {
         factory.with(baseURL: self)
     }
 }

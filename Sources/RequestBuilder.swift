@@ -8,8 +8,8 @@
 import Foundation
 
 @resultBuilder
-struct RequestBuilder<T: RequestBody> {
-    static func buildBlock(_ components: RequestComponent...) -> URLRequest {
+public struct RequestBuilder<T: RequestBody> {
+    public static func buildBlock(_ components: RequestComponent...) -> URLRequest {
         components.reduce(RequestFactory<T>()) {
             $1.apply(to: $0)
         }

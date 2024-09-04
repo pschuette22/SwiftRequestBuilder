@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol RequestComponent {
+public protocol RequestComponent {
     func apply<T: RequestBody>(to factory: RequestFactory<T>) -> RequestFactory<T>
 }

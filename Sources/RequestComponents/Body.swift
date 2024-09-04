@@ -14,7 +14,7 @@ public struct Body<B: RequestBody>: RequestComponent {
         self.body = body
     }
     
-    func apply<T>(to factory: RequestFactory<T>) -> RequestFactory<T> where T : RequestBody {
+    public func apply<T>(to factory: RequestFactory<T>) -> RequestFactory<T> where T : RequestBody {
         guard let unwrapped = body as? T else {
             assertionFailure("Incorrect body type")
             return factory

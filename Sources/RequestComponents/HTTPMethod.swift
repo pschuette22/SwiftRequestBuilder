@@ -23,7 +23,7 @@ public enum HTTPMethod: String, RequestComponent {
         self = method
     }
     
-    func apply<T>(to factory: RequestFactory<T>) -> RequestFactory<T> where T : RequestBody {
+    public func apply<T>(to factory: RequestFactory<T>) -> RequestFactory<T> where T : RequestBody {
         factory.with(httpMethod: self)
     }
 }
