@@ -14,7 +14,7 @@ public struct CachePolicy: RequestComponent {
         self.cachePolicy = cachePolicy
     }
     
-    func apply<T>(to factory: RequestFactory<T>) -> RequestFactory<T> where T : RequestBody {
+    public func apply<T>(to factory: RequestFactory<T>) -> RequestFactory<T> where T : RequestBody {
         factory.cachePolicy(cachePolicy)
     }
 }

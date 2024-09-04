@@ -13,7 +13,7 @@ public struct Encoder: RequestComponent {
         self.encoder = encoder
     }
     
-    func apply<T>(to factory: RequestFactory<T>) -> RequestFactory<T> where T : RequestBody {
+    public func apply<T>(to factory: RequestFactory<T>) -> RequestFactory<T> where T : RequestBody {
         factory.encoder(encoder)
     }
 }
