@@ -15,7 +15,8 @@ let package = Package(
             targets: ["SwiftRequestBuilder"]
         ),
         .library(
-            name: "SwiftRequestBuilderTestHelpers", 
+            name: "SwiftRequestBuilderTestHelpers",
+            type: .dynamic,
             targets: ["SwiftRequestBuilderTestHelpers"]
         )
     ],
