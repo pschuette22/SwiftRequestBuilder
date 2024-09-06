@@ -28,7 +28,11 @@ let package = Package(
         .target(
             name: "SwiftRequestBuilderTestHelpers",
             dependencies: ["SwiftRequestBuilder"],
-            path: "TestHelpers"),
+            path: "TestHelpers",
+            linkerSettings: [
+                .linkedFramework("XCTest")
+            ]
+        ),
         .testTarget(
             name: "SwiftRequestBuilderTests",
             dependencies: ["SwiftRequestBuilder", "SwiftRequestBuilderTestHelpers"],
